@@ -1,0 +1,18 @@
+{
+  "name": "lexadvocate",
+  "version": "1.0.0",
+  "description": "LexAdvocate — MERN Stack Legal Services Platform",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "client:dev": "npm --prefix client run dev",
+    "server:dev": "npm --prefix server run dev",
+    "client:build": "npm --prefix client run build",
+    "server:start": "npm --prefix server run start",
+    "seed": "npm --prefix server run seed",
+    "install:all": "npm install && npm --prefix server install && npm --prefix client install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
