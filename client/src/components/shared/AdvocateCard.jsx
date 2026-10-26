@@ -1,9 +1,20 @@
 import { Link } from 'react-router-dom';
-import { MapPin, Briefcase, Star, Heart, Calendar, Video, PhoneCall, Users } from 'lucide-react';
-import { Avatar, StarRating, Badge, Button } from '../ui';
+import {
+  MapPin,
+  Briefcase,
+  Heart,
+  Calendar,
+  Users,
+} from 'lucide-react';
+
+import { Avatar, StarRating, Badge } from '../ui';
 import { formatCurrency } from '../../utils/formatters';
 
-const AdvocateCard = ({ advocate, isSaved = false, onToggleSave }) => {
+const AdvocateCard = ({
+  advocate,
+  isSaved = false,
+  onToggleSave,
+}) => {
   const {
     _id,
     user,
@@ -16,121 +27,195 @@ const AdvocateCard = ({ advocate, isSaved = false, onToggleSave }) => {
     consultationFee = 500,
     court,
     bio,
-    consultationTypes = ['video', 'audio'],
   } = advocate;
 
+  const advocateName = user?.name || 'Advocate';
+
   return (
-    <div className="card hover:shadow-card-hover transition-all duration-200 flex flex-col justify-between border border-border group">
-      <div>
-        {/* Header: Photo, Name, Rating & Save button */}
-        <div className="flex items-start gap-3.5">
-          <Avatar
-            src={advocate.profilePhoto || user?.avatar}
-            name={user?.name}
-            size="lg"
-            className="ring-2 ring-red-50 shrink-0"
-          />
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-1">
-              <div>
-                <h3 className="font-semibold text-text-primary text-base leading-tight truncate group-hover:text-primary transition-colors">
-                  {user?.name}
+    <div className="card group flex h-full w-full min-w-0 max-w-full flex-col overflow-hidden border border-border transition-all duration-200 hover:shadow-card-hover">
+
+      {/* Advocate details */}
+      <div className="flex min-w-0 flex-1 flex-col">
+
+        {/* Header */}
+        <div className="flex min-w-0 items-start gap-3">
+
+          {/* Avatar */}
+          <div className="shrink-0">
+            <Avatar
+              src={advocate.profilePhoto || user?.avatar}
+              name={advocateName}
+              size="lg"
+              className="ring-2 ring-primary-50"
+            />
+          </div>
+
+          {/* Name and rating */}
+          <div className="min-w-0 flex-1">
+
+            <div className="flex min-w-0 items-start justify-between gap-2">
+
+              <div className="min-w-0 flex-1">
+                <h3
+                  title={advocateName}
+                  className="break-words text-sm font-semibold leading-5 text-text-primary transition-colors group-hover:text-primary sm:text-base"
+                >
+                  {advocateName}
                 </h3>
-                <p className="text-xs text-text-secondary mt-0.5 truncate">
+
+                <p
+                  title={designation || 'Advocate'}
+                  className="mt-0.5 break-words text-xs leading-4 text-text-secondary"
+                >
                   {designation || 'Advocate'}
                 </p>
               </div>
+
+              {/* Save button */}
               {onToggleSave && (
                 <button
                   type="button"
                   onClick={() => onToggleSave(_id)}
-                  className={`p-1.5 rounded-lg border transition-colors shrink-0 ${
+                  className={`shrink-0 rounded-lg border p-1.5 transition-colors ${
                     isSaved
-                      ? 'bg-primary-50 border-primary-200 text-primary'
-                      : 'border-border text-text-muted hover:text-primary hover:border-primary-200'
+                      ? 'border-primary-200 bg-primary-50 text-primary'
+                      : 'border-border text-text-muted hover:border-primary-200 hover:text-primary'
                   }`}
-                  aria-label="Save advocate"
+                  aria-label={
+                    isSaved ? 'Remove saved advocate' : 'Save advocate'
+                  }
+                  aria-pressed={isSaved}
                 >
-                  <Heart className={`w-4 h-4 ${isSaved ? 'fill-primary' : ''}`} />
+                  <Heart
+                    className={`h-4 w-4 ${
+                      isSaved ? 'fill-primary' : ''
+                    }`}
+                  />
                 </button>
               )}
+
             </div>
 
-            <div className="flex items-center gap-1.5 mt-1.5">
+            {/* Rating */}
+            <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-1.5">
               <StarRating rating={rating} size="sm" />
-              <span className="text-xs font-semibold text-text-primary">{rating.toFixed(1)}</span>
-              <span className="text-xs text-text-muted">({totalReviews})</span>
+
+              <span className="text-xs font-semibold text-text-primary">
+                {Number(rating || 0).toFixed(1)}
+              </span>
+
+              <span className="text-xs text-text-muted">
+                ({totalReviews || 0})
+              </span>
             </div>
+
           </div>
         </div>
 
-        {/* Practice Area Badges */}
-        <div className="mt-4 flex flex-wrap gap-1.5">
-          {practiceAreas.slice(0, 3).map((area) => (
-            <Badge key={area} variant="red">
-              {area}
-            </Badge>
-          ))}
-          {practiceAreas.length > 3 && (
-            <Badge variant="gray">+{practiceAreas.length - 3} more</Badge>
-          )}
-        </div>
+        {/* Practice areas */}
+        {practiceAreas.length > 0 && (
+          <div className="mt-4 flex min-w-0 flex-wrap gap-1.5">
+            {practiceAreas.slice(0, 3).map((area, index) => (
+              <Badge
+                key={`${area}-${index}`}
+                variant="red"
+              >
+                {area}
+              </Badge>
+            ))}
 
-        {/* Key Info: Location, Court & Experience */}
-        <div className="mt-3.5 space-y-1.5 text-xs text-text-secondary">
-          <div className="flex items-center gap-2">
-            <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
-            <span className="truncate">
-              {location?.city ? `${location.city}, ${location.state || 'India'}` : 'New Delhi, India'}
+            {practiceAreas.length > 3 && (
+              <Badge variant="gray">
+                +{practiceAreas.length - 3} more
+              </Badge>
+            )}
+          </div>
+        )}
+
+        {/* Location, experience and court */}
+        <div className="mt-3.5 flex min-w-0 flex-col gap-2 text-xs text-text-secondary">
+
+          {/* Location */}
+          <div className="flex min-w-0 items-start gap-2">
+            <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+
+            <span className="min-w-0 flex-1 break-words leading-4">
+              {location?.city
+                ? `${location.city}, ${location.state || 'India'}`
+                : 'New Delhi, India'}
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <Briefcase className="w-3.5 h-3.5 text-text-muted shrink-0" />
-            <span>{experience} Years of Active Experience</span>
+
+          {/* Experience */}
+          <div className="flex min-w-0 items-start gap-2">
+            <Briefcase className="mt-0.5 h-3.5 w-3.5 shrink-0 text-text-muted" />
+
+            <span className="min-w-0 flex-1 break-words leading-4">
+              {experience} Years of Active Experience
+            </span>
           </div>
+
+          {/* Court */}
           {court && (
-            <div className="flex items-center gap-2">
-              <Users className="w-3.5 h-3.5 text-text-muted shrink-0" />
-              <span className="truncate">{court}</span>
+            <div className="flex min-w-0 items-start gap-2">
+              <Users className="mt-0.5 h-3.5 w-3.5 shrink-0 text-text-muted" />
+
+              <span
+                title={court}
+                className="min-w-0 flex-1 break-words leading-4"
+              >
+                {court}
+              </span>
             </div>
           )}
+
         </div>
 
-        {/* Bio snippet */}
+        {/* Bio */}
         {bio && (
-          <p className="mt-3 text-xs text-text-secondary line-clamp-2 leading-relaxed">
+          <p className="mt-3 break-words text-xs leading-5 text-text-secondary [overflow-wrap:anywhere]">
             {bio}
           </p>
         )}
+
       </div>
 
-      {/* Footer: Fee & Book Consultation Action */}
-      <div className="mt-5 pt-4 border-t border-border flex items-center justify-between gap-3">
-        <div>
-          <span className="text-[11px] text-text-muted uppercase tracking-wider block">
+      {/* Footer */}
+      <div className="mt-5 flex min-w-0 flex-col gap-3 border-t border-border pt-4">
+
+        {/* Consultation fee */}
+        <div className="min-w-0">
+          <span className="block text-[11px] uppercase tracking-wider text-text-muted">
             Consultation Fee
           </span>
-          <span className="text-lg font-bold text-primary">
+
+          <span className="block break-words text-lg font-bold text-primary">
             {formatCurrency(consultationFee)}
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Actions */}
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
+
           <Link
             to={`/advocates/${_id}`}
-            className="btn-ghost text-xs px-3 py-2 border border-border"
+            className="btn-ghost inline-flex min-w-0 max-w-full items-center justify-center rounded-lg border border-border px-3 py-2 text-xs"
           >
             Profile
           </Link>
+
           <Link
             to={`/client/book/${_id}`}
-            className="btn-primary text-xs px-3.5 py-2"
+            className="btn-primary inline-flex min-w-0 max-w-full items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-xs"
           >
-            <Calendar className="w-3.5 h-3.5" />
-            Book
+            <Calendar className="h-3.5 w-3.5 shrink-0" />
+            <span>Book</span>
           </Link>
+
         </div>
+
       </div>
+
     </div>
   );
 };
