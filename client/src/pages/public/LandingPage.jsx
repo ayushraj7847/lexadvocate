@@ -188,7 +188,7 @@ const LandingPage = () => {
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-text-primary tracking-tight leading-[1.15]">
               Trusted Legal Support,{' '}
-              <span className="text-primary underline decoration-red-200 decoration-wavy decoration-2">
+              <span className="text-primary  decoration-wavy decoration-2">
                 Just a Click Away.
               </span>
             </h1>
